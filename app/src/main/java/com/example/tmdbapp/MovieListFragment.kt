@@ -1,29 +1,22 @@
 package com.example.tmdbapp
 
-import android.graphics.Bitmap
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.TextView
 import androidx.databinding.DataBindingUtil
-import androidx.navigation.fragment.findNavController
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.resource.bitmap.TransformationUtils.centerCrop
 import com.example.tmdbapp.database.Movies
-import com.example.tmdbapp.databinding.FragmentFirstBinding
-import com.example.tmdbapp.utils.constants
+import com.example.tmdbapp.databinding.FragmentMovieListBinding
+import com.example.tmdbapp.databinding.MovielistBinding
 
 /**
  * A simple [Fragment] subclass as the default destination in the navigation.
  */
-class FirstFragment : Fragment() {
+class MovieListFragment : Fragment() {
 
 
-    private var _binding: FragmentFirstBinding? = null
+    private var _binding: FragmentMovieListBinding? = null
 
     // This property is only valid between onCreateView and
     // onDestroyView.
@@ -35,10 +28,16 @@ class FirstFragment : Fragment() {
     ): View? {
 
        // _binding = FragmentFirstBinding.inflate(inflater, container, false)
-        _binding = DataBindingUtil.inflate(inflater,R.layout.fragment_first,container, false)
+        _binding = DataBindingUtil.inflate(inflater,R.layout.fragment_movie_list,container, false)
         val movies = Movies();
+        movies.movieList.forEach { movie ->
+            val movielistBinding : MovielistBinding = DataBindingUtil.inflate(inflater,R.layout.movielist, container, false)
+            movielistBinding.movie = movie
+            binding.movieListLinearLayout.addView(movielistBinding.root);
 
-        binding.movies = movies
+        }
+
+
 
         return binding.root
 
