@@ -1,11 +1,14 @@
 package com.example.tmdbapp
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.databinding.DataBindingUtil
+import androidx.navigation.fragment.findNavController
 import com.example.tmdbapp.database.Movies
 import com.example.tmdbapp.databinding.FragmentMovieListBinding
 import com.example.tmdbapp.databinding.MovielistBinding
@@ -26,19 +29,24 @@ class MovieListFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-
-       // _binding = FragmentFirstBinding.inflate(inflater, container, false)
-        _binding = DataBindingUtil.inflate(inflater,R.layout.fragment_movie_list,container, false)
+        // Inflate layout for this fragment
+        _binding = FragmentMovieListBinding.inflate(layoutInflater)
         val movies = Movies();
         movies.movieList.forEach { movie ->
             val movielistBinding : MovielistBinding = DataBindingUtil.inflate(inflater,R.layout.movielist, container, false)
             movielistBinding.movie = movie
             binding.movieListLinearLayout.addView(movielistBinding.root);
 
+            movielistBinding.root.setOnClickListener {
+                this.findNavController().navigate(MovieListFragmentDirections.actionMovieListToMovieDetails(movie))
+            }
+
+
+
         }
 
 
-
+        Log.i("returning","returning root")
         return binding.root
 
     }
@@ -46,6 +54,8 @@ class MovieListFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+
 
         //val movies = Movies();
 
