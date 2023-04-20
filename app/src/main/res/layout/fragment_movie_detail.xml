@@ -9,6 +9,10 @@
         <variable
             name="movie"
             type="com.example.tmdbapp.model.Movie" />
+        <variable
+            name="moviedetails"
+            type="com.example.tmdbapp.model.MovieDetails"
+            />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -27,17 +31,19 @@
             app:layout_constraintTop_toTopOf="parent"
             tools:src="@tools:sample/avatars" />
 
+
         <TextView
             android:id="@+id/movie_detail_title"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:layout_marginTop="25dp"
+            android:layout_marginTop="12dp"
             android:text="@{movie.movieTitle}"
             android:textColor="#000000"
             android:textSize="18sp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/movie_detail_backdrop" />
+            app:layout_constraintTop_toBottomOf="@+id/movie_detail_backdrop"
+            tools:text="MOVIE_TITLE" />
 
         <Button
             android:id="@+id/back_to_movielist"
@@ -48,6 +54,38 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
+
+        <TextView
+            android:id="@+id/movie_genre"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="14dp"
+            android:text="Genre(s) + @{moviedetails.movieGenre}"
+            android:textColor="#000000"
+            app:layout_constraintStart_toStartOf="@+id/movie_detail_title"
+            app:layout_constraintTop_toBottomOf="@+id/movie_detail_title"
+            tools:text="Movie Genre: " />
+
+        <TextView
+            android:id="@+id/movie_homepage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:textColor="#000000"
+            app:layout_constraintStart_toStartOf="@+id/movie_genre"
+            app:layout_constraintTop_toBottomOf="@+id/movie_genre"
+            tools:text="MovieHomepage" />
+
+        <TextView
+            android:id="@+id/imdb_url"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="TextView"
+            android:textColor="#000000"
+            app:layout_constraintStart_toStartOf="@+id/movie_homepage"
+            app:layout_constraintTop_toBottomOf="@+id/movie_homepage"
+            tools:text="Imdb url" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

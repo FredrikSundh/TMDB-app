@@ -10,6 +10,7 @@ class Movies {
 
         movieList.add(
             Movie(
+                "502356",
                 "The Super Mario Bros. Movie",
                 "/qNBAXBIQlnOThrVvA6mA2B5ggV6.jpg",
                 "/9n2tJBplPbgR2ca05hS5CKXwP2c.jpg",
@@ -20,6 +21,7 @@ class Movies {
 
         movieList.add(
             Movie(
+                "76600",
                 "Avatar: The Way of Water",
                 "/t6HIqrRAclMCA60NsSmeqe9RmNV.jpg",
                 "/ovM06PdF3M8wvKb06i4sjW3xoww.jpg",
@@ -29,6 +31,7 @@ class Movies {
 
         movieList.add(
             Movie(
+                "594767",
                 "Shazam! Fury of the Gods",
                 "/A3ZbZsmsvNGdprRi2lKgGEeVLEH.jpg",
                 "/wybmSmviUXxlBmX44gtpow5Y9TB.jpg",
@@ -38,15 +41,17 @@ class Movies {
 
         movieList.add(
             Movie(
+                "638974",
                 "Murder Mystery 2",
+                "/s1VzVhXlqsevi8zeCMG9A16nEUf.jpg",
                 "/bT3IpP7OopgiVuy6HCPOWLuaFAd.jpg",
-                "/9n2tJBplPbgR2ca05hS5CKXwP2c.jpg",
                 "2023-03-28",
                 "After starting their own detective agency, Nick and Audrey Spitz land a career-making case when their billionaire pal is kidnapped from his wedding."            )
         )
 
         movieList.add(
             Movie(
+                "677179",
                 "Creed III",
                 "/cvsXj3I9Q2iyyIo95AecSd1tad7.jpg",
                 "/5i6SjyDbDWqyun8klUuCxrlFbyw.jpg",
