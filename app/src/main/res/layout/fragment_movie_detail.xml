@@ -88,6 +88,15 @@
             app:layout_constraintTop_toBottomOf="@+id/movie_homepage"
             tools:text="Imdb url" />
 
+        <Button
+            android:id="@+id/thirdFragmentButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="toThirdFragment"
+            app:layout_constraintBottom_toTopOf="@+id/back_to_movielist"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

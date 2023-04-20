@@ -15,6 +15,7 @@
             android:id="@+id/action_MovieList_to_MovieDetails"
             app:destination="@id/MovieDetailFragment" />
     </fragment>
+
     <fragment
         android:id="@+id/MovieDetailFragment"
         android:name="com.example.tmdbapp.MovieDetailFragment"
@@ -24,8 +25,28 @@
         <action
             android:id="@+id/action_MovieDetails_to_MovieList"
             app:destination="@id/MovieListFragment" />
+        <action
+            android:id = "@+id/action_MovieDetails_to_ThirdFragment"
+            app:destination = "@+id/ThirdFragment"
+            />
         <argument
             android:name="Movie"
             app:argType="com.example.tmdbapp.model.Movie" />
     </fragment>
-</navigation>
+
+    <fragment
+        android:id ="@+id/ThirdFragment"
+        android:name ="com.example.tmdbapp.ThirdFragment"
+        android:label = "third fragment"
+        tools:layout="@layout/fragment_third" >
+
+        <action
+            android:id = "@+id/action_thirdFragment_to_MovieDetails"
+            app:destination = "@+id/MovieDetailFragment"
+            />
+        <argument
+            android:name="Movie"
+            app:argType="com.example.tmdbapp.model.Movie" />
+    </fragment>
+
+    </navigation>

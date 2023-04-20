@@ -76,6 +76,9 @@ class MovieDetailFragment : Fragment() {
         binding.backToMovielist.setOnClickListener {
             findNavController().navigate(MovieDetailFragmentDirections.actionMovieDetailsToMovieList())
         }
+        binding.thirdFragmentButton.setOnClickListener {
+            findNavController().navigate(MovieDetailFragmentDirections.actionMovieDetailsToThirdFragment(movie))
+        }
     }
 
     override fun onDestroyView() {
