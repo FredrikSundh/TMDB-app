@@ -72,6 +72,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
             android:textColor="#000000"
+            android:text="movie homepage"
             app:layout_constraintStart_toStartOf="@+id/movie_genre"
             app:layout_constraintTop_toBottomOf="@+id/movie_genre"
             tools:text="MovieHomepage" />

@@ -13,6 +13,7 @@ import com.example.tmdbapp.database.DetailList
 import com.example.tmdbapp.databinding.FragmentMovieDetailBinding
 import com.example.tmdbapp.model.Movie
 import com.example.tmdbapp.model.MovieDetails
+import com.example.tmdbapp.utils.URLhandler
 
 /**
  * A simple [Fragment] subclass as the second destination in the navigation.
@@ -45,10 +46,18 @@ class MovieDetailFragment : Fragment() {
         binding.moviedetails = detail
         binding.movieGenre.text = "Genre(s): " + detail.movieGenre
 
-        // Adding Link to homepage
-        binding.movieHomepage.setText(Html.fromHtml(detail.homePageURL))
-        Linkify.addLinks(binding.movieHomepage,Linkify.ALL)
-        binding.movieHomepage.setMovementMethod(LinkMovementMethod.getInstance())
+        val handler : URLhandler = URLhandler() // used to call openUrl to handle links
+
+        binding.movieHomepage.text = "Movie Homepage: " + detail.homePageURL
+
+        binding.movieHomepage.setOnClickListener{
+            handler.openURL(binding.root.context,detail.homePageURL)
+        }
+
+         //Adding Link to homepage
+        //binding.movieHomepage.setText(Html.fromHtml(detail.homePageURL))
+        //Linkify.addLinks(binding.movieHomepage,Linkify.ALL)
+        //binding.movieHomepage.setMovementMethod(LinkMovementMethod.getInstance())
 
         //Adding Link to IMDB
         binding.imdbUrl.setText(Html.fromHtml("https://www.imdb.com/title/" + detail.imdbID))
