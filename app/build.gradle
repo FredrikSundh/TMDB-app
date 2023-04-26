@@ -55,4 +55,13 @@ dependencies {
 
     // Glide image library
     implementation 'com.github.bumptech.glide:glide:4.15.1'    //kapt 'com.github.bumptech.glide:annotations:4.15.1'
+
+    //Layout related libraries
+    implementation 'androidx.activity:activity:1.7.0'
+
+    // Retrofit and Moshi and Okhttp
+    implementation 'com.squareup.moshi:moshi-kotlin:1.14.0'
+    implementation 'com.squareup.retrofit2:converter-moshi:2.9.0'
+    implementation "com.squareup.okhttp3:logging-interceptor:4.9.3"
+
 }

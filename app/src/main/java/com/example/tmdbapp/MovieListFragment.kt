@@ -8,16 +8,24 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
+import com.example.tmdbapp.adapter.MovieListAdapter
+import com.example.tmdbapp.adapter.MovieListClickListener
 import com.example.tmdbapp.database.Movies
 import com.example.tmdbapp.databinding.FragmentMovieListBinding
 import com.example.tmdbapp.databinding.MovielistBinding
+import com.example.tmdbapp.network.DataFetchStatus
+import com.example.tmdbapp.viewmodel.MovieListViewModel
+import com.example.tmdbapp.viewmodel.MovieListViewModelFactory
 
 /**
  * A simple [Fragment] subclass as the default destination in the navigation.
  */
 class MovieListFragment : Fragment() {
 
+    private lateinit var viewModel: MovieListViewModel
+    private lateinit var viewModelFactory  : MovieListViewModelFactory
 
     private var _binding: FragmentMovieListBinding? = null
 
@@ -31,19 +39,57 @@ class MovieListFragment : Fragment() {
     ): View? {
         // Inflate layout for this fragment
         _binding = FragmentMovieListBinding.inflate(layoutInflater)
-        val movies = Movies();
-        movies.movieList.forEach { movie ->
-            val movielistBinding : MovielistBinding = DataBindingUtil.inflate(inflater,R.layout.movielist, container, false)
-            movielistBinding.movie = movie
-            binding.movieListLinearLayout.addView(movielistBinding.root);
 
-            movielistBinding.root.setOnClickListener {
-                this.findNavController().navigate(MovieListFragmentDirections.actionMovieListToMovieDetails(movie))
+        val application = requireNotNull(this.activity).application
+        viewModelFactory = MovieListViewModelFactory(application)
+        viewModel = ViewModelProvider(this, viewModelFactory).get(MovieListViewModel::class.java)
+
+        val movieListAdapter = MovieListAdapter(
+            MovieListClickListener {
+                movie ->
+                viewModel.onMovieListItemClicked(movie)
             }
+        )
 
 
+        binding.movieListRv.adapter = movieListAdapter
 
+        viewModel.movieList.observe(
+            viewLifecycleOwner
+        ) { movieList ->
+           movieList?.let {
+               movieListAdapter.submitList(movieList)
+           }
         }
+        viewModel.navigateToMovieDetail.observe(viewLifecycleOwner) {movie ->
+            movie?.let {
+                this.findNavController().navigate(MovieListFragmentDirections.actionMovieListToMovieDetails(movie))
+                viewModel.onMovieDetailNavigated()
+            }
+        }
+
+        viewModel.dataFetchStatus.observe(viewLifecycleOwner) {status ->
+            status?.let {
+
+                when(status) {
+                    DataFetchStatus.ERROR -> {
+                        binding.statusImage.visibility = View.VISIBLE
+                        binding.statusImage.setImageResource(R.drawable.ic_connection_error)
+
+                    }
+                    DataFetchStatus.LOADING -> {
+                        binding.statusImage.visibility = View.VISIBLE
+                        binding.statusImage.setImageResource(R.drawable.loading_animation)
+
+                    }
+                    DataFetchStatus.DONE -> {
+                        binding.statusImage.visibility = View.GONE
+                    }
+                }
+            }
+        }
+
+
 
 
         Log.i("returning","returning root")
