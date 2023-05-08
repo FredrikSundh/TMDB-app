@@ -10,6 +10,8 @@ import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.GridLayoutManager
+import com.example.tmdbapp.adapter.MovieGridAdapter
 import com.example.tmdbapp.adapter.MovieListAdapter
 import com.example.tmdbapp.adapter.MovieListClickListener
 import com.example.tmdbapp.database.Movies
@@ -44,12 +46,42 @@ class MovieListFragment : Fragment() {
         viewModelFactory = MovieListViewModelFactory(application)
         viewModel = ViewModelProvider(this, viewModelFactory).get(MovieListViewModel::class.java)
 
+
+        var MovieGridAdapter = viewModel.movieList.value?.let {
+            MovieGridAdapter(it.toMutableList(), MovieListClickListener
+            { movie ->
+                viewModel.onMovieListItemClicked(movie)
+            })
+        } // if the movielist is not null create an adapter with access to the list
+
+
+        binding.movieListRv.adapter = MovieGridAdapter
+        val layoutManager = GridLayoutManager(this.context, 3)
+
+        binding.movieListRv.layoutManager = layoutManager // Sets layout to grid
+
+        viewModel.movieList.observe(viewLifecycleOwner) { movieList ->
+            movieList?.let {
+                MovieGridAdapter = viewModel.movieList.value?.let {MovieGridAdapter(it.toMutableList(), MovieListClickListener {
+                    movie ->
+                    viewModel.onMovieListItemClicked(movie)
+                })}
+                binding.movieListRv.adapter = MovieGridAdapter
+                //MovieGridAdapter!!.submitList(it.toMutableList())
+            }
+        }
+
+
+/**
         val movieListAdapter = MovieListAdapter(
             MovieListClickListener {
                 movie ->
                 viewModel.onMovieListItemClicked(movie)
             }
         )
+        binding.movieListRv.adapter = movieListAdapter
+
+
 
 
         binding.movieListRv.adapter = movieListAdapter
@@ -61,6 +93,7 @@ class MovieListFragment : Fragment() {
                movieListAdapter.submitList(movieList)
            }
         }
+**/
         viewModel.navigateToMovieDetail.observe(viewLifecycleOwner) {movie ->
             movie?.let {
                 this.findNavController().navigate(MovieListFragmentDirections.actionMovieListToMovieDetails(movie))
