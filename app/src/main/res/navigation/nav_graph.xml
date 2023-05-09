@@ -36,9 +36,9 @@
 
     <fragment
         android:id ="@+id/ThirdFragment"
-        android:name ="com.example.tmdbapp.ThirdFragment"
+        android:name ="com.example.tmdbapp.ReviewsFragment"
         android:label = "third fragment"
-        tools:layout="@layout/fragment_third" >
+        tools:layout="@layout/fragment_reviews" >
 
         <action
             android:id = "@+id/action_thirdFragment_to_MovieDetails"

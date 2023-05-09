@@ -10,6 +10,7 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.http.GET
+import retrofit2.http.Path
 import retrofit2.http.Query
 import java.util.concurrent.TimeUnit
 
@@ -61,6 +62,21 @@ interface TMDBApiService {
         apiKey: String = constants.API_KEY // will be moved from constants
 
     ) : MovieResponse // return type of function
+
+    @GET("{movie_id}/reviews")
+     suspend fun getReviews(
+        @Path("movie_id") movieId : String,
+        @Query("api_key")
+        apiKey: String = constants.API_KEY
+    ): getReviewResponse
+
+     @GET("{movie_id}/videos")
+     suspend fun getVideos(
+         @Path("movie_id") movieId : String,
+         @Query("api_key")
+         apiKey: String = constants.API_KEY
+     ) : getVideoResponse
+
 }
 
 object TMDBApi {
