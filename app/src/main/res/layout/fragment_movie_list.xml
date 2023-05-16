@@ -22,6 +22,7 @@
             android:id="@+id/status_image"
             android:layout_width="154dp"
             android:layout_height="150dp"
+            android:layout_gravity="center"
             android:contentDescription="@string/movies_are_being_loaded"
             app:layout_constraintBottom_toBottomOf="@+id/movie_list_rv"
             app:layout_constraintEnd_toEndOf="@+id/movie_list_rv"

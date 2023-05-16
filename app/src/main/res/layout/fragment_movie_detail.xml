@@ -6,6 +6,8 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+
+        <import type="android.view.View" />
         <variable
             name="movie"
             type="com.example.tmdbapp.model.Movie" />
@@ -13,6 +15,10 @@
             name="moviedetails"
             type="com.example.tmdbapp.model.MovieDetails"
             />
+
+        <variable
+            name="viewmodel"
+            type="com.example.tmdbapp.viewmodel.MovieDetailViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -53,6 +59,7 @@
             android:text="@string/previous"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.947"
             app:layout_constraintStart_toStartOf="parent" />
 
         <TextView
@@ -60,7 +67,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="14dp"
-            android:text="Genre(s) + @{moviedetails.movieGenre}"
+            android:text="Genre(s)"
             android:textColor="#000000"
             app:layout_constraintStart_toStartOf="@+id/movie_detail_title"
             app:layout_constraintTop_toBottomOf="@+id/movie_detail_title"
@@ -95,6 +102,31 @@
             android:text="toThirdFragment"
             app:layout_constraintBottom_toTopOf="@+id/back_to_movielist"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <Button
+            android:id="@+id/save_locally"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:text="Save Locally"
+            android:onClick="@{() -> viewmodel.onSaveMovieButtonClicked(movie)}"
+            android:visibility ="@{viewmodel.isFavorite ? View.GONE : View.VISIBLE}"
+
+            app:layout_constraintBottom_toTopOf="@+id/remove_locally"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <Button
+            android:id="@+id/remove_locally"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginBottom="140dp"
+            android:onClick="@{() -> viewmodel.onRemoveMovieButtonClicked(movie)}"
+            android:text="Remove Locally"
+            android:visibility ="@{viewmodel.isFavorite ? View.VISIBLE : View.GONE}"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
 
 

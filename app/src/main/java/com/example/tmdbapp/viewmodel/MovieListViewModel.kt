@@ -5,18 +5,18 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.example.tmdbapp.Repository.MovieRepository
+import com.example.tmdbapp.database.MovieDatabaseDao
 import com.example.tmdbapp.model.Movie
-import com.example.tmdbapp.database.Movies
 import com.example.tmdbapp.network.DataFetchStatus
 import com.example.tmdbapp.network.MovieResponse
 import com.example.tmdbapp.network.TMDBApi
 import kotlinx.coroutines.launch
 
-class MovieListViewModel(application : Application) : AndroidViewModel(application) {
+class MovieListViewModel(private val movieDatabaseDao: MovieDatabaseDao, application : Application) : AndroidViewModel(application) {
 
     private val _dataFetchStatus = MutableLiveData<DataFetchStatus>()
     val dataFetchStatus : LiveData<DataFetchStatus>
-
     get() {
         return _dataFetchStatus
     }
@@ -32,6 +32,7 @@ class MovieListViewModel(application : Application) : AndroidViewModel(applicati
     get() {
         return _navigateToMovieDetail
     }
+    val repository = MovieRepository(movieDatabaseDao)
 
     init {
         //val movieList = Movies()
@@ -53,10 +54,27 @@ class MovieListViewModel(application : Application) : AndroidViewModel(applicati
     }
 
 
+
     fun getTopRatedMovies() {
         viewModelScope.launch {
-            _movieList.value = TMDBApi.movieListRetrofitService.getTopRatedMovies().results
+            try {
+                val movieResponse: MovieResponse =
+                    TMDBApi.movieListRetrofitService.getTopRatedMovies()
+                _movieList.value = movieResponse.results
+                _dataFetchStatus.value = DataFetchStatus.DONE
+            } catch (e: Exception) {
+                _dataFetchStatus.value = DataFetchStatus.ERROR
+                _movieList.value = arrayListOf()
+            }
         }
+    }
+
+
+    fun getSavedMovies() {
+        viewModelScope.launch {
+            _movieList.value = movieDatabaseDao.getAllMovies()
+        }
+
     }
     fun onMovieListItemClicked(movie: Movie) {
         _navigateToMovieDetail.value = movie

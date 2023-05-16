@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
@@ -14,6 +15,8 @@ import androidx.recyclerview.widget.GridLayoutManager
 import com.example.tmdbapp.adapter.MovieGridAdapter
 import com.example.tmdbapp.adapter.MovieListAdapter
 import com.example.tmdbapp.adapter.MovieListClickListener
+import com.example.tmdbapp.database.MovieDatabase
+import com.example.tmdbapp.database.MovieDatabaseDao
 import com.example.tmdbapp.database.Movies
 import com.example.tmdbapp.databinding.FragmentMovieListBinding
 import com.example.tmdbapp.databinding.MovielistBinding
@@ -28,6 +31,7 @@ class MovieListFragment : Fragment() {
 
     private lateinit var viewModel: MovieListViewModel
     private lateinit var viewModelFactory  : MovieListViewModelFactory
+    private lateinit var  movieDatabaseDao : MovieDatabaseDao
 
     private var _binding: FragmentMovieListBinding? = null
 
@@ -43,7 +47,8 @@ class MovieListFragment : Fragment() {
         _binding = FragmentMovieListBinding.inflate(layoutInflater)
 
         val application = requireNotNull(this.activity).application
-        viewModelFactory = MovieListViewModelFactory(application)
+        movieDatabaseDao = MovieDatabase.getInstance(application).movieDatabaseDao
+        viewModelFactory = MovieListViewModelFactory(movieDatabaseDao,application)
         viewModel = ViewModelProvider(this, viewModelFactory).get(MovieListViewModel::class.java)
 
 
@@ -124,10 +129,31 @@ class MovieListFragment : Fragment() {
 
 
 
-
+        setHasOptionsMenu(true)
         Log.i("returning","returning root")
         return binding.root
 
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean { // may need to be changed to use menuhost and menu provider
+        Log.i("hello","in optionselected")
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        when (item.itemId) {
+            R.id.action_load_popular_movies -> {
+                Log.i("hello","popular selected")
+
+                viewModel.getPopularMovies()
+            }
+            R.id.action_load_top_rated_movies -> {
+                viewModel.getTopRatedMovies()
+            }
+            R.id.action_load_saved_movies -> {
+                viewModel.getSavedMovies()
+            }
+        }
+        return super.onOptionsItemSelected(item)
     }
 
 

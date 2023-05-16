@@ -77,6 +77,13 @@ interface TMDBApiService {
          apiKey: String = constants.API_KEY
      ) : getVideoResponse
 
+     @GET("{movie_id}")
+     suspend fun getDetails(
+         @Path("movie_id") movieId : String,
+         @Query("api_key")
+         apiKey: String = constants.API_KEY
+     ) : getDetailsResponse
+
 }
 
 object TMDBApi {
