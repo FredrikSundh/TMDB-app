@@ -39,3 +39,36 @@ data class Movie(
     var description: String
 ) : Parcelable { // inherits parcelablle so it can be sent to other fragments
 }
+
+@Entity(tableName = "favouriteMovies")
+data class favouriteMovie(
+    @PrimaryKey()
+    @Json(name = "id")
+    val id: String,
+
+    @ColumnInfo(name = "title")
+    @Json(name = "title")
+    var movieTitle: String,
+
+    @ColumnInfo(name = "poster_path")
+    @Json(name = "poster_path")
+    var posterPath: String,
+
+    @ColumnInfo(name = "backdrop_path")
+    @Json(name ="backdrop_path")
+    var backDropPath: String,
+
+    @ColumnInfo(name = "release_date")
+    @Json(name = "release_date")
+    var releaseDate: String,
+
+    @ColumnInfo(name = "overview")
+    @Json(name = "overview")
+    var description: String
+
+)
+
+@Entity(tableName = "cachedType")
+data class CachedType(
+    @PrimaryKey val type: String
+)

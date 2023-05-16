@@ -9,6 +9,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.tmdbapp.database.MovieDatabaseDao
 import com.example.tmdbapp.model.Movie
+import com.example.tmdbapp.model.favouriteMovie
 import com.example.tmdbapp.network.DataFetchStatus
 import com.example.tmdbapp.network.MovieResponse
 import com.example.tmdbapp.network.TMDBApi
@@ -32,6 +33,30 @@ class MovieDetailViewModel(
         setIsFavorite(movie)
     }
 
+    private fun convertMovieToFavourite(movie:Movie) : favouriteMovie {
+        return favouriteMovie(
+            id = movie.id,
+            movieTitle = movie.movieTitle,
+            posterPath = movie.posterPath,
+            backDropPath = movie.backDropPath,
+            releaseDate = movie.releaseDate,
+            description = movie.description
+        )
+
+    }
+
+    private fun convertFavouriteToMovie(favouriteMovie: favouriteMovie) : Movie {
+        return Movie(
+            id = favouriteMovie.id,
+            movieTitle = favouriteMovie.movieTitle,
+            posterPath = favouriteMovie.posterPath,
+            backDropPath = favouriteMovie.backDropPath,
+            releaseDate = favouriteMovie.releaseDate,
+            description = favouriteMovie.description
+        )
+
+    }
+
     private fun setIsFavorite(movie: Movie) {
         viewModelScope.launch {
             _isFavorite.value = movieDatabaseDao.isFavorite(movie.id.toLong())
@@ -43,14 +68,14 @@ class MovieDetailViewModel(
 
     fun onSaveMovieButtonClicked(movie: Movie) {
         viewModelScope.launch {
-            movieDatabaseDao.insert(movie)
+            movieDatabaseDao.insertFavourite(convertMovieToFavourite(movie))
             setIsFavorite(movie)
         }
     }
 
     fun onRemoveMovieButtonClicked(movie: Movie) {
         viewModelScope.launch {
-            movieDatabaseDao.delete(movie)
+            movieDatabaseDao.deleteFavourite(convertMovieToFavourite(movie))
             setIsFavorite(movie)
         }
     }

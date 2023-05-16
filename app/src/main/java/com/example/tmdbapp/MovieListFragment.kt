@@ -143,11 +143,11 @@ class MovieListFragment : Fragment() {
         when (item.itemId) {
             R.id.action_load_popular_movies -> {
                 Log.i("hello","popular selected")
-
-                viewModel.getPopularMovies()
+                viewModel.getPopularFromRepo("popular")
+               // viewModel.getPopularMovies()
             }
             R.id.action_load_top_rated_movies -> {
-                viewModel.getTopRatedMovies()
+                viewModel.getPopularFromRepo("top rated")
             }
             R.id.action_load_saved_movies -> {
                 viewModel.getSavedMovies()
