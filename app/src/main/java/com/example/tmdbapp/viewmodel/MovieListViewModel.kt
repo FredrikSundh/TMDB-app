@@ -10,13 +10,16 @@ import com.bumptech.glide.Glide.init
 import com.example.tmdbapp.Repository.MovieRepository
 import com.example.tmdbapp.database.MovieDatabaseDao
 import com.example.tmdbapp.model.Movie
+import com.example.tmdbapp.network.ConnectivityObserver
 import com.example.tmdbapp.network.DataFetchStatus
 import com.example.tmdbapp.network.MovieResponse
 import com.example.tmdbapp.network.TMDBApi
 import com.example.tmdbapp.utils.convertFavouriteToMovie
 import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 
-class MovieListViewModel(private val movieDatabaseDao: MovieDatabaseDao, application : Application) : AndroidViewModel(application) {
+class MovieListViewModel(private val connectivityObserver: ConnectivityObserver,private val movieDatabaseDao: MovieDatabaseDao, application : Application) : AndroidViewModel(application) {
 
     private val _dataFetchStatus = MutableLiveData<DataFetchStatus>()
     val dataFetchStatus : LiveData<DataFetchStatus>
@@ -30,6 +33,7 @@ class MovieListViewModel(private val movieDatabaseDao: MovieDatabaseDao, applica
         return _movieList
     }
 **/
+var displaying : String? = "popular"
     private val _navigateToMovieDetail = MutableLiveData<Movie?>()
     val navigateToMovieDetail: MutableLiveData<Movie?>
     get() {
@@ -37,51 +41,47 @@ class MovieListViewModel(private val movieDatabaseDao: MovieDatabaseDao, applica
     }
     val repository = MovieRepository(movieDatabaseDao)
     val movieList = repository.movies
+    val connectionObserver : ConnectivityObserver = connectivityObserver
+    var cachedType : String? = ""
+
+
+
 
     init {
+        val job2 = GlobalScope.launch {
+            cachedType = movieDatabaseDao.getFirstCachedType()
+        }
+        runBlocking {
+            job2.join()
+        }
+        setupObserver()
         //val movieList = Movies()
         //_movieList.value =  movieList.movieList
         //getPopularMovies()
-        getPopularFromRepo("popular")
+        getPopularFromRepo(cachedType)
+        Log.i("called getfromrepo with","$cachedType")
     }
-/**
-    fun getPopularMovies() {
-        viewModelScope.launch {
-            try {
-                val movieResponse: MovieResponse = TMDBApi.movieListRetrofitService.getPopularMovies()
-                _movieList.value = movieResponse.results
-                _dataFetchStatus.value = DataFetchStatus.DONE
-            }catch(e: Exception) {
-                _movieList.value = arrayListOf()
-                _dataFetchStatus.value = DataFetchStatus.ERROR
+
+    fun setupObserver() {
+        connectionObserver.observe().onEach {
+            if(it == ConnectivityObserver.Status.Available && displaying != "saved") {
+                Log.i("in if", "calling get repo")
+                getPopularFromRepo(displaying)
             }
-        }
+            Log.i("network status is", "$it")
+        }.launchIn(GlobalScope)
+
     }
 
 
-
-    fun getTopRatedMovies() {
-        viewModelScope.launch {
-            try {
-                val movieResponse: MovieResponse =
-                    TMDBApi.movieListRetrofitService.getTopRatedMovies()
-                _movieList.value = movieResponse.results
-                _dataFetchStatus.value = DataFetchStatus.DONE
-            } catch (e: Exception) {
-                _dataFetchStatus.value = DataFetchStatus.ERROR
-                _movieList.value = arrayListOf()
-            }
-        }
-    }
-**/
 
 // There is no way to determine of what type the cached data is on startup
 // For this reason I will create a new database Entity which i will store and delete
 // this database entry will only tell me the current cachetype.
 // by getting this object from the database you can determine which type of movies are cached
 // and program the correct Behaviour, By doing this i wont need new movietypes and converters
-fun getPopularFromRepo( callType: String) {
-    var cachedType : String? = ""
+fun getPopularFromRepo( callType: String?) {
+
     val job = GlobalScope.launch {
             cachedType = movieDatabaseDao.getFirstCachedType()
     }
@@ -90,12 +90,15 @@ fun getPopularFromRepo( callType: String) {
     }
     viewModelScope.launch {
         if(callType == "popular") {
+            Log.i("hello", "in calltype popular")
+            displaying = callType
             // try to do refreshpopular call, if it fails load movies from repo list
             try {
                 repository.refreshPopular("popular")
                 _dataFetchStatus.value = DataFetchStatus.DONE
             } catch (e: Exception) {
                 if(cachedType == "popular") {
+                    Log.i("hello","in cachedtype popular")
                     _dataFetchStatus.value = DataFetchStatus.DONE
                     repository.movies.postValue(movieDatabaseDao.getAllMovies())
                     return@launch
@@ -108,6 +111,7 @@ fun getPopularFromRepo( callType: String) {
             }
         }
         else { // if calltype isnt popular, its top rated
+            displaying = callType
             try {
                 repository.refreshPopular("top rated")
                 _dataFetchStatus.value = DataFetchStatus.DONE
@@ -133,6 +137,7 @@ fun getPopularFromRepo( callType: String) {
 
 
     fun getSavedMovies() {
+        displaying = "saved"
         viewModelScope.launch {
             val favouriteMovielist = movieDatabaseDao.getFavourites()
             var newMovieList = mutableListOf<Movie>()

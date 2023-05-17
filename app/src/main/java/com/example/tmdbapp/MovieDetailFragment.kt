@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.example.tmdbapp.database.DetailList
@@ -23,6 +24,7 @@ import com.example.tmdbapp.utils.URLhandler
 import com.example.tmdbapp.viewmodel.MovieDetailViewModel
 import com.example.tmdbapp.viewmodel.MovieDetailViewModelFactory
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 
@@ -69,49 +71,45 @@ class MovieDetailFragment : Fragment() {
 
 
         val job = GlobalScope.launch {
-            movieDetailsResponse = TMDBApi.movieListRetrofitService.getDetails(movie.id)
+            try {
+
+
+                movieDetailsResponse = TMDBApi.movieListRetrofitService.getDetails(movie.id)
+            }
+            catch (e: Exception) {
+                e.printStackTrace()
+            }
         }
         runBlocking {
             job.join() // wait for http get request to enter strings
         }
+        try {
+            binding.viewmodel = viewModel
+            val handler: URLhandler = URLhandler()
+            val details = movieDetailsResponse // to acces movviedetailsresponse
 
-        binding.viewmodel = viewModel
-        val handler : URLhandler = URLhandler()
-        val details = movieDetailsResponse // to acces movviedetailsresponse
+            // below code iterates the genre objects and builds a genretext string to display in textview
+            var genretext = "Genre(s): "
+            for (genreObject in details.genres) {
+                genretext = genretext + genreObject.genre + ", "
+            }
+            binding.movieGenre.text = genretext
+            binding.movieHomepage.text = "Movie Homepage: " + details.homepage_url
 
-        // below code iterates the genre objects and builds a genretext string to display in textview
-        var genretext = "Genre(s): "
-        for (genreObject in details.genres) {
-            genretext = genretext + genreObject.genre + ", "
-        }
-        binding.movieGenre.text = genretext
-        binding.movieHomepage.text = "Movie Homepage: " + details.homepage_url
 
-       /** val moviedetails : DetailList = DetailList() // Måste ändra, movieDetails laddar hårdkodade värden
-       val detail = when(movie.id) {
-            "502356" -> moviedetails.detailList[0] // Mario
-            "76600" -> moviedetails.detailList[1] // Avatar
-            "594767" -> moviedetails.detailList[2] // Shazam
-            "638974" -> moviedetails.detailList[3] // Murder mystery
-            else -> moviedetails.detailList[4] // Creed
-       }
-        binding.moviedetails = detail
-        binding.movieGenre.text = "Genre(s): " + detail.movieGenre
+            binding.movieHomepage.setOnClickListener {
+                handler.openURL(binding.root.context, details.homepage_url)
+            }
 
-        val handler : URLhandler = URLhandler() // used to call openUrl to handle links
 
-        binding.movieHomepage.text = "Movie Homepage: " + detail.homePageURL
-    **/
-        binding.movieHomepage.setOnClickListener{
-            handler.openURL(binding.root.context,details.homepage_url)
+            //Adding Link to IMDB
+            binding.imdbUrl.setText(Html.fromHtml("https://www.imdb.com/title/" + details.imdbID))
+            Linkify.addLinks(binding.imdbUrl, Linkify.ALL)
+            binding.movieHomepage.setMovementMethod(LinkMovementMethod.getInstance())
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
 
-
-
-        //Adding Link to IMDB
-        binding.imdbUrl.setText(Html.fromHtml("https://www.imdb.com/title/" + details.imdbID))
-        Linkify.addLinks(binding.imdbUrl,Linkify.ALL)
-        binding.movieHomepage.setMovementMethod(LinkMovementMethod.getInstance())
 
 
 

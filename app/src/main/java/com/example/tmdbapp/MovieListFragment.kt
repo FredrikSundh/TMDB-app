@@ -20,7 +20,9 @@ import com.example.tmdbapp.database.MovieDatabaseDao
 import com.example.tmdbapp.database.Movies
 import com.example.tmdbapp.databinding.FragmentMovieListBinding
 import com.example.tmdbapp.databinding.MovielistBinding
+import com.example.tmdbapp.network.ConnectivityObserver
 import com.example.tmdbapp.network.DataFetchStatus
+import com.example.tmdbapp.network.NetworkConnectivityObserver
 import com.example.tmdbapp.viewmodel.MovieListViewModel
 import com.example.tmdbapp.viewmodel.MovieListViewModelFactory
 
@@ -32,6 +34,7 @@ class MovieListFragment : Fragment() {
     private lateinit var viewModel: MovieListViewModel
     private lateinit var viewModelFactory  : MovieListViewModelFactory
     private lateinit var  movieDatabaseDao : MovieDatabaseDao
+    private  lateinit var connectivityObserver: ConnectivityObserver
 
     private var _binding: FragmentMovieListBinding? = null
 
@@ -48,7 +51,8 @@ class MovieListFragment : Fragment() {
 
         val application = requireNotNull(this.activity).application
         movieDatabaseDao = MovieDatabase.getInstance(application).movieDatabaseDao
-        viewModelFactory = MovieListViewModelFactory(movieDatabaseDao,application)
+        connectivityObserver = NetworkConnectivityObserver(application)
+        viewModelFactory = MovieListViewModelFactory(connectivityObserver,movieDatabaseDao,application)
         viewModel = ViewModelProvider(this, viewModelFactory).get(MovieListViewModel::class.java)
 
 
